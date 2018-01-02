@@ -27,20 +27,21 @@ class MonApp(App):
         self.valuebox.add_widget(self.kaributton)
         self.kaributton.bind(on_press=self.roadbutton)
         self.kari2button = Button(text='kari2')
-        self.kari2button.bind(on_press=self.reloadcanvas)
+        # self.kari2button.bind(on_press=self.reloadcanvas)
         self.selectbox.add_widget(self.kari2button)
         self.maincanvas.add_widget(self.fig.canvas)
         return self.root
 
     def reloadcanvas(self, instance):
         self.ax.clear()
-        self.ax.hist(self.df['SepalWidth'])
+        self.ax.hist(self.df[instance.text])
         self.fig.canvas.draw_idle()
 
     def roadbutton(self, instance):
         self.valuebox.clear_widgets()
         for column in self.df.columns:
-            self.valuebox.add_widget(Button(text=column))
+            self.valuebox.add_widget(Button(text=column, on_press=self.reloadcanvas))
+            self.targetcolumn = column
 
 
 if __name__ == '__main__':
