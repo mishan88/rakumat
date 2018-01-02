@@ -17,7 +17,7 @@ class MonApp(App):
         self.ax.hist(self.df['SepalLength'])
         # main
         self.root = BoxLayout()
-        self.valuebox = BoxLayout()
+        self.valuebox = BoxLayout(orientation='vertical')
         self.selectbox = BoxLayout()
         self.maincanvas = BoxLayout()
         self.root.add_widget(self.valuebox)
@@ -25,6 +25,7 @@ class MonApp(App):
         self.root.add_widget(self.maincanvas)
         self.kaributton = Button(text='kari')
         self.valuebox.add_widget(self.kaributton)
+        self.kaributton.bind(on_press=self.roadbutton)
         self.kari2button = Button(text='kari2')
         self.kari2button.bind(on_press=self.reloadcanvas)
         self.selectbox.add_widget(self.kari2button)
@@ -35,6 +36,11 @@ class MonApp(App):
         self.ax.clear()
         self.ax.hist(self.df['SepalWidth'])
         self.fig.canvas.draw_idle()
+
+    def roadbutton(self, instance):
+        self.valuebox.clear_widgets()
+        for column in self.df.columns:
+            self.valuebox.add_widget(Button(text=column))
 
 
 if __name__ == '__main__':
