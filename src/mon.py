@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import matplotlib
 matplotlib.use('module://kivy.garden.matplotlib.backend_kivy')
 import pandas as pd
@@ -8,6 +10,8 @@ from kivy.uix.button import Button
 from kivy.uix.actionbar import ActionBar
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.popup import Popup
+from kivy.uix.filechooser import FileChooserListView
+
 from kivy.app import App
 from kivy.garden.matplotlib.backend_kivy import FigureCanvas
 
@@ -15,9 +19,10 @@ from kivy.garden.matplotlib.backend_kivy import FigureCanvas
 class MonApp(App):
 
     def build(self):
-        self.df = pd.read_csv('./iris.csv')
+        # self.df = pd.read_csv('./iris.csv')
+        self.df = None
         self.fig, self.ax = plt.subplots(nrows=1, ncols=1)
-        self.ax.hist(self.df['SepalLength'])
+        # self.ax.hist(self.df['SepalLength'])
         # main
         self.root = BoxLayout(orientation='vertical')
         self.menubar = BoxLayout(size_hint_y=0.1)
@@ -47,8 +52,16 @@ class MonApp(App):
 
         # loadresource
         self.popup = Popup(title='Select Resource')
-        self.popup_close = Button(text='Close', on_press=self.popup.dismiss)
-        self.popup.add_widget(self.popup_close)
+        self.popup_selectresource = BoxLayout(orientation='vertical')
+        self.popup.add_widget(self.popup_selectresource)
+
+        self.popup_button_csv = FileChooserListView()
+        # self.popup_close = Button(text='Close', on_press=self.popup.dismiss, size_hint_y=0.05)
+
+        self.popup_close = Button(text='Close', on_press=self.get_file, size_hint_y=0.05)
+
+        self.popup_selectresource.add_widget(self.popup_button_csv)
+        self.popup_selectresource.add_widget(self.popup_close)
 
         return self.root
 
@@ -69,6 +82,9 @@ class MonApp(App):
     def openpopup(self, instance):
         self.popup.open()
 
+    def get_file(self, instance):
+        self.df = pd.read_csv(Path(str(self.popup_button_csv.selection[0])))
+        self.popup.dismiss()
 
 if __name__ == '__main__':
     MonApp().run()
