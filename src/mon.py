@@ -7,6 +7,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.actionbar import ActionBar
 from kivy.uix.scrollview import ScrollView
+from kivy.uix.popup import Popup
 from kivy.app import App
 from kivy.garden.matplotlib.backend_kivy import FigureCanvas
 
@@ -19,7 +20,7 @@ class MonApp(App):
         self.ax.hist(self.df['SepalLength'])
         # main
         self.root = BoxLayout(orientation='vertical')
-        self.menubar = ActionBar(size_hint_y=0.1)
+        self.menubar = BoxLayout(size_hint_y=0.1)
         self.mainwindow = BoxLayout()
         self.valuescroll = ScrollView(size_hint_x=0.3)
         self.valuebox = BoxLayout(orientation='vertical')
@@ -40,6 +41,14 @@ class MonApp(App):
         self.maincanvas.add_widget(self.fig.canvas)
 
         # actionbar
+        self.resourcebutton = Button(text='LoadResource')
+        self.menubar.add_widget(self.resourcebutton)
+        self.resourcebutton.bind(on_press=self.openpopup)
+
+        # loadresource
+        self.popup = Popup(title='Select Resource')
+        self.popup_close = Button(text='Close', on_press=self.popup.dismiss)
+        self.popup.add_widget(self.popup_close)
 
         return self.root
 
@@ -56,6 +65,9 @@ class MonApp(App):
 
     def savecanvas(self, instance):
         self.fig.canvas.print_png('XXXX.png')
+
+    def openpopup(self, instance):
+        self.popup.open()
 
 
 if __name__ == '__main__':
