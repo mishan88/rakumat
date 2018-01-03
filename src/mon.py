@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
+from kivy.uix.actionbar import ActionBar
+from kivy.uix.scrollview import ScrollView
 from kivy.app import App
 from kivy.garden.matplotlib.backend_kivy import FigureCanvas
 
@@ -16,20 +18,29 @@ class MonApp(App):
         self.fig, self.ax = plt.subplots(nrows=1, ncols=1)
         self.ax.hist(self.df['SepalLength'])
         # main
-        self.root = BoxLayout()
+        self.root = BoxLayout(orientation='vertical')
+        self.menubar = ActionBar(size_hint_y=0.1)
+        self.mainwindow = BoxLayout()
+        self.valuescroll = ScrollView(size_hint_x=0.3)
         self.valuebox = BoxLayout(orientation='vertical')
-        self.selectbox = BoxLayout()
+        self.valuescroll.add_widget(self.valuebox)
+        self.selectbox = BoxLayout(size_hint_x=0.3)
         self.maincanvas = BoxLayout()
-        self.root.add_widget(self.valuebox)
-        self.root.add_widget(self.selectbox)
-        self.root.add_widget(self.maincanvas)
+        self.root.add_widget(self.menubar)
+        self.root.add_widget(self.mainwindow)
+        self.mainwindow.add_widget(self.valuescroll)
+        self.mainwindow.add_widget(self.selectbox)
+        self.mainwindow.add_widget(self.maincanvas)
         self.kaributton = Button(text='kari')
         self.valuebox.add_widget(self.kaributton)
         self.kaributton.bind(on_press=self.roadbutton)
-        self.kari2button = Button(text='kari2')
-        # self.kari2button.bind(on_press=self.reloadcanvas)
+        self.kari2button = Button(text='save')
+        self.kari2button.bind(on_press=self.savecanvas)
         self.selectbox.add_widget(self.kari2button)
         self.maincanvas.add_widget(self.fig.canvas)
+
+        # actionbar
+
         return self.root
 
     def reloadcanvas(self, instance):
@@ -42,6 +53,9 @@ class MonApp(App):
         for column in self.df.columns:
             self.valuebox.add_widget(Button(text=column, on_press=self.reloadcanvas))
             self.targetcolumn = column
+
+    def savecanvas(self, instance):
+        self.fig.canvas.print_png('XXXX.png')
 
 
 if __name__ == '__main__':
